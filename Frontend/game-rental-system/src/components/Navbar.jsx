@@ -15,7 +15,7 @@ export default function Navbar() {
           <a className="lg:text-3xl md:text-[20px]" href="/rentals">
             My Rentals
           </a>
-          <a className="lg:text-3xl md:text-[20px]" href="/">
+          <a className="lg:text-3xl md:text-[20px]" href="/profile">
             My Profile
           </a>
         </div>

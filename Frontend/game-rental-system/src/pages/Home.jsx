@@ -14,19 +14,19 @@ export default function Home() {
           className="flex items-center justify-center border rounded-md h-full bg-["
           href="/games"
         >
-          <h2>Games</h2>
+          <h2 className="text-2xl">Games</h2>
         </a>
         <a
           className="flex items-center justify-center border rounded-md h-full"
           href="/"
         >
-          <h2>My Rentals</h2>
+          <h2 className="text-2xl">My Rentals</h2>
         </a>
         <a
           className="flex items-center justify-center border rounded-md h-full"
           href="/"
         >
-          <h2>Something</h2>
+          <h2 className="text-2xl">My Profile</h2>
         </a>
       </div>
     </>
