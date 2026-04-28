@@ -2,9 +2,9 @@ export default function Navbar() {
   return (
     <>
       <nav className="grid grid-cols-3 border border-neutral-700 rounded-sm p-4 items-center">
-        <div className="p-1 rounded-md relative w-30 h-ful lg:w-50 lg:h-full md:w-50 md:h-full">
-          <h1 className="text-3xl">Something here</h1>
-        </div>
+        <a className="p-1 rounded-md relative w-30 h-ful lg:w-50 lg:h-full md:w-50 md:h-full" href="/">
+          <img src="/svg(1).svg" alt="logo" className="w-full h-full object-cover" />
+        </a>
 
         <h1 className="flex items-center justify-center text-3xl">Game Pass</h1>
 
@@ -16,7 +16,7 @@ export default function Navbar() {
             My Rentals
           </a>
           <a className="lg:text-3xl md:text-[20px]" href="/">
-            Something
+            My Profile
           </a>
         </div>
       </nav>
