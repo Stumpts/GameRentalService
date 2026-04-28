@@ -1,5 +1,3 @@
-
-
 CREATE TABLE Account (
     accountID INT PRIMARY KEY,
     username VARCHAR(20),
