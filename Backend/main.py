@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import *
 from database import *
 from fastapi.middleware.cors import CORSMiddleware
@@ -41,8 +41,8 @@ def create_account(account: Account):
         accountID = cursor.lastrowid
         connection.close()
         return{"message": "Account successfully created","accountID": accountID}
-   except Exception as e:
-        raise HTTPException(status_cdoe=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/get-rental-history")
 def get_rental_history(accountID: int):
@@ -110,12 +110,13 @@ def get_account_info(accountID: int):
         connection.close()
         if row is None:
             raise HTTPException(status_code=404, detail="Account not found")
-        return
+        return (
             {
             "accountID": row[0], 
             "username": row[1], 
             "password": row[2]
             }
+        )
     except HTTPException:
         raise
     except Exception as e:
