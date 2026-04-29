@@ -1,18 +1,18 @@
 CREATE TABLE Account (
-    accountID INT PRIMARY KEY,
+    accountID INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(20),
     password VARCHAR(20)
 )
 
 CREATE TABLE Customer (
-    customerID INT PRIMARY KEY,
+    customerID INT PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(20),
     email VARCHAR(20),
     phoneNumber CHAR(11),
 )
 
 CREATE TABLE Game (
-    gameID INT PRIMARY KEY,
+    gameID INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(50),
     publisher VARCHAR(20),
     ageRating VARCHAR(3),
@@ -23,7 +23,7 @@ CREATE TABLE Game (
 )
 
 CREATE TABLE Review (
-    gameID INT,
+    gameID INTEGER,
     accountID INT,
     StarRating DECIMAL (2, 1),
 
@@ -33,10 +33,22 @@ CREATE TABLE Review (
 )
 
 CREATE TABLE Subscription (
-    accountID INT PRIMARY KEY,
+    accountID INTEGER PRIMARY KEY,
     tier INT,
     vouchers INT
 
     FOREIGN KEY (accountID) REFERENCES Account(accountID)
 )
+
+
+CREATE TABLE Rental (
+    accountID INTEGER,
+    gameID INTEGER,
+    rentDate DATE,
+    returnDate DATE,
+
+    PRIMARY KEY (accountID, gameID, rentDate),
+    FOREIGN KEY (accountID) REFERENCES Account(accountID),
+    FOREIGN KEY (gameID) REFERENCES Game(gameID)
+);
 
