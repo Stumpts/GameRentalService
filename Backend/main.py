@@ -4,9 +4,15 @@ from database import *
 
 app = FastAPI()
 
+init_db()
+
 class Account(BaseModel):
     username: str
     password: str
+
+@app.get("/")
+def test_landing():
+    return {"message": "hello world"}
 
 @app.post("/create-account")
 def create_account(account: Account):
@@ -101,5 +107,28 @@ def get_account_info(accountID: int):
             "password": row[2]
         }
     ]
+
+@app.post("/verify-login")
+def verify_login(account: Account):
+    connection = get_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""SELECT *
+                   FROM Account
+                   WHERE username = ? AND password = ?
+                   """,
+                   (account.username, account.password))
+    row = cursor.fetchone()
+
+    if row == None:
+        return {"message": "Credentials incorrect"}
+
+
+    connection.close()
+
+    return {"accountID": row[0]}
+
+
+
 
 
