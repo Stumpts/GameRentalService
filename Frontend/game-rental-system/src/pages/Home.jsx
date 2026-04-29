@@ -9,24 +9,23 @@ export default function Home() {
         Welcome To Game Pass!
       </h1>
 
-      <div className="grid grid-cols-3 gap-10 mt-4 w-full h-dvh p-4">
+      <div className="grid grid-cols-3 gap-10 mt-4 w-full h-[50dvh] p-4">
         <a
-          className="flex items-center justify-center border rounded-md h-full bg-["
+          className="flex items-center justify-center border rounded-md h-full bg-[url('/game.svg')] bg-cover font-pt-serif px-5 py-2.5 text-black duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] active:translate-y-1 active:scale-x-110 active:scale-y-90 hover:-translate-y-1 hover:scale-105"
           href="/games"
         >
-          <h2 className="text-2xl">Games</h2>
+          
         </a>
         <a
-          className="flex items-center justify-center border rounded-md h-full"
-          href="/"
+          className="flex items-center justify-center bg-[url('/rentalhistory.svg')] bg-cover bg-center border rounded-md h-full font-pt-serif px-5 py-2.5 text-black duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] active:translate-y-1 active:scale-x-110 active:scale-y-90 hover:-translate-y-1 hover:scale-105"
+          href="/rentals"
         >
-          <h2 className="text-2xl">My Rentals</h2>
+          
         </a>
         <a
-          className="flex items-center justify-center border rounded-md h-full"
-          href="/"
+          className="flex items-center justify-center border rounded-md h-full bg-[url('/myprofile.svg')] bg-cover bg-center font-pt-serif px-5 py-2.5 text-black duration-300 ease-[cubic-bezier(0.175,0.885,0.32,1.275)] active:translate-y-1 active:scale-x-110 active:scale-y-90 hover:-translate-y-1 hover:scale-105"
+          href="/profile"
         >
-          <h2 className="text-2xl">My Profile</h2>
         </a>
       </div>
     </>
