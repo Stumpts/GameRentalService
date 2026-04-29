@@ -1,17 +1,17 @@
-CREATE TABLE Account (
+CREATE TABLE IF NOT EXISTS Account (
     accountID INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(20),
     password VARCHAR(20)
 );
 
-CREATE TABLE Customer (
+CREATE TABLE IF NOT EXISTS Customer (
     customerID INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(20),
     email VARCHAR(20),
     phoneNumber CHAR(11)
 );
 
-CREATE TABLE Game (
+CREATE TABLE IF NOT EXISTS Game (
     gameID INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(50),
     publisher VARCHAR(20),
@@ -22,7 +22,7 @@ CREATE TABLE Game (
 
 );
 
-CREATE TABLE Review (
+CREATE TABLE IF NOT EXISTS Review (
     gameID INTEGER,
     accountID INT,
     StarRating DECIMAL (2, 1),
@@ -32,7 +32,7 @@ CREATE TABLE Review (
     FOREIGN KEY (accountID) REFERENCES Account(accountID)
 );
 
-CREATE TABLE Subscription (
+CREATE TABLE IF NOT EXISTS Subscription (
     accountID INTEGER PRIMARY KEY,
     tier INT,
     vouchers INT,
@@ -41,7 +41,7 @@ CREATE TABLE Subscription (
 );
 
 
-CREATE TABLE Rental (
+CREATE TABLE IF NOT EXISTS Rental (
     accountID INTEGER,
     gameID INTEGER,
     rentDate DATE,

@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [state, setState] = useState("login");
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
+  const navigate = useNavigate();
 
   // login and register logic
   const handleSubmit = async (e) => {
@@ -18,11 +21,16 @@ export default function Login() {
         },
         body: JSON.stringify({ "username": userName, "password": password })
       });
-      const data = await response.json();
-      if (!data.valid) {
+      
+      if (!response.ok) {
         setError(true);
-      } else {
+        return;
+      }
+      else {
+        const data = await response.json();
+        sessionStorage.setItem('accountID', data.accountID);
         setError(false);
+        navigate('/');
       }
     }
     else if (state === 'register') {
@@ -33,11 +41,17 @@ export default function Login() {
         },
         body: JSON.stringify({ "username": userName, "password": password })
       });
+
       const data = await response.json();
-      if (!data.valid) {
+      if (!response.ok) {
         setError(true);
-      } else {
+        setAccountCreated(false);
+        return;
+      }
+      else {
+        setAccountCreated(true);
         setError(false);
+        setState('login');
       }
     }
   };
@@ -99,6 +113,11 @@ export default function Login() {
       {error && (
         <p className="text-red-500 text-sm m-auto">
           Invalid username or password!
+        </p>
+      )}
+      {accountCreated && (
+        <p className="text-green-500 text-sm m-auto">
+          Account created successfully! Please login.
         </p>
       )}
     </form>
