@@ -144,6 +144,36 @@ def verify_login(account: Account):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/available-games")
+def get_available_games():
+    """Get all games that are not currently rented out."""
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+        cursor.execute("""
+                       SELECT * FROM Game
+                       WHERE gameID NOT IN (
+                           SELECT gameID FROM Rental WHERE returnDate IS NULL
+                       )
+                       """)
+        rows = cursor.fetchall()
+        connection.close()
+        return [
+            {
+                "gameID": row[0],
+                "name": row[1],
+                "publisher": row[2],
+                "ageRating": row[3],
+                "price": row[4],
+                "averageStarRating": row[5],
+                "releaseDate": row[6]
+            }
+            for row in rows
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+            
         
 
 
