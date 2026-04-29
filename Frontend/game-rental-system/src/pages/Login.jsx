@@ -58,7 +58,7 @@ export default function Login() {
 
 
   return (
-    <form className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] text-gray-500 rounded-lg shadow-xl border border-gray-200 bg-white mt-16" onSubmit={handleSubmit}>
+    <form className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-88 text-gray-500 rounded-lg shadow-xl border border-gray-200 bg-white mt-16" onSubmit={handleSubmit}>
       <p className="text-2xl font-medium m-auto">
         <span className="">User</span>{" "}
         {state === "login" ? "Login" : "Sign Up"}
