@@ -174,6 +174,79 @@ def get_available_games():
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/add-to-wishlist")
+def add_to_wishlist(item: WishlistItem):
+    """Add a game to a user's wishlist."""
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+        cursor.execute("""
+                       INSERT INTO Wishlist (accountID, gameID)
+                       VALUES (?, ?)
+                       """, (item.accountID, item.gameID))
+        connection.commit()
+        connection.close()
+        return {"message": "Game added to wishlist"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+ 
+ 
+@app.delete("/remove-from-wishlist")
+def remove_from_wishlist(accountID: int, gameID: int):
+    """Remove a game from a user's wishlist."""
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+ 
+        cursor.execute("""
+                       SELECT * FROM Wishlist 
+                       WHERE accountID = ? AND gameID = ?
+                       """, (accountID, gameID))
+        if cursor.fetchone() is None:
+            raise HTTPException(status_code=404, detail="Wishlist item not found")
+ 
+        cursor.execute("""
+                       DELETE FROM Wishlist 
+                       WHERE accountID = ? AND gameID = ?
+                       """, (accountID, gameID))
+        connection.commit()
+        connection.close()
+        return {"message": "Game removed from wishlist"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+ 
+ 
+@app.get("/get-wishlist")
+def get_wishlist(accountID: int):
+    """Get all games on a user's wishlist."""
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+        cursor.execute("""
+                       SELECT Game.gameID, Game.name, Game.publisher, Game.price, Game.averageStarRating
+                       FROM Wishlist
+                       JOIN Game ON Wishlist.gameID = Game.gameID
+                       WHERE Wishlist.accountID = ?
+                       """, (accountID,))
+        rows = cursor.fetchall()
+        connection.close()
+        return [
+            {
+                "gameID": row[0],
+                "name": row[1],
+                "publisher": row[2],
+                "price": row[3],
+                "averageStarRating": row[4]
+            }
+            for row in rows
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+ 
+ 
             
         
 
