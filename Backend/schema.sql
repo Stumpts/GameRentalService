@@ -51,4 +51,11 @@ CREATE TABLE IF NOT EXISTS Rental (
     FOREIGN KEY (accountID) REFERENCES Account(accountID),
     FOREIGN KEY (gameID) REFERENCES Game(gameID)
 );
+CREATE TABLE IF NOT EXISTS Wishlist (
+    accountID INTEGER,
+    gameID INTEGER,
+    PRIMARY KEY (accountID, gameID),
+    FOREIGN KEY (accountID) REFERENCES Account(accountID),
+    FOREIGN KEY (gameID) REFERENCES Game(gameID)
+);
 
