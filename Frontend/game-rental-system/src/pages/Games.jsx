@@ -27,7 +27,7 @@ export default function Games() {
         Our Available Games to Rent!
       </h1>
 
-      <Card games={games} />
+      <Card games={games} setGames={setGames} />
     </>
   );
 }
