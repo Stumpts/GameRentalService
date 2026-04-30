@@ -1,24 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import RentalTable from "../components/RentalTable";
 
 export default function Rentals() {
-  const [hasRentals, setHasRentals] = useState(true);
+  
+  const [data, setData] = useState([]);
 
-  const data = [
-    {
-      accountID: 1,
-      gameID: 101,
-      rentDate: "2026-04-01",
-      returnDate: "2026-04-10",
-    },
-    {
-      accountID: 2,
-      gameID: 205,
-      rentDate: "2026-04-05",
-      returnDate: null,
-    },
-  ];
+  useEffect(() => {
+    const fetchRentals = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/get-rental-history?accountID=${sessionStorage.getItem("accountID")}`);
+        const data = await response.json();
+        setData(data);
+      } catch (error) {
+        console.error("Error fetching rentals:", error);
+      }
+    };
+
+    fetchRentals();
+  }, []);
 
   return (
     <>

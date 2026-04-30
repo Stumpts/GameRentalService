@@ -1,12 +1,13 @@
 export default function RentalTable({ data }) { 
 
   return (
-    <div className="w-full overflow-x-auto rounded-2xl shadow-md bg-white">
+    <div className="flex items-center justify-center rounded-2xl shadow-md bg-white mt-4 mx-8">
       <table className="min-w-full text-sm text-left text-gray-700">
         <thead className="bg-gray-100 text-xs uppercase tracking-wider text-gray-600">
           <tr>
-            <th className="px-6 py-3">Account ID</th>
+            <th className="px-6 py-3">Rental ID</th>
             <th className="px-6 py-3">Game ID</th>
+            <th className="px-6 py-3">Game Name</th>
             <th className="px-6 py-3">Rent Date</th>
             <th className="px-6 py-3">Return Date</th>
             <th className="px-6 py-3">Status</th>
@@ -19,14 +20,15 @@ export default function RentalTable({ data }) {
 
             return (
               <tr
-                key={`${rental.accountID}-${rental.gameID}-${rental.rentDate}`}
-                className="hover:bg-gray-50 transition"
+                key={`${rental.rentalID}-${rental.gameID}-${rental.rentDate}`}
+                className="hover:bg-gray-50 transition hover:cursor-pointer"
               >
                 <td className="px-6 py-4 font-medium text-gray-900">
-                  {rental.accountID}
+                  {rental.rentalID}
                 </td>
 
                 <td className="px-6 py-4">{rental.gameID}</td>
+                <td className="px-6 py-4">{rental.gameName}</td>
 
                 <td className="px-6 py-4">
                   {new Date(rental.rentDate).toLocaleDateString()}
