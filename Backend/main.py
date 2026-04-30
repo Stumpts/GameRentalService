@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import *
 from database import *
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 
 app = FastAPI()
 origins = [
@@ -21,6 +22,25 @@ init_db()
 class Account(BaseModel):
     username: str
     password: str
+
+
+class Review(BaseModel):
+    accountID: int
+    gameID: int
+    starRating: float
+
+
+class WishlistItem(BaseModel):
+    accountID: int
+    gameID: int
+
+class UpdateUser(BaseModel):
+    accountID: int
+    username: Optional[str] = None
+    password: Optional[str] = None
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phoneNumber: Optional[str] = None
 
 @app.get("/")
 def test_landing():
@@ -114,7 +134,10 @@ def get_account_info(accountID: int):
             {
             "accountID": row[0], 
             "username": row[1], 
-            "password": row[2]
+            "password": row[2],
+            "name": row[3],
+            "email": row[4],
+            "phoneNumber": row[5]
             }
         )
     except HTTPException:
@@ -246,6 +269,92 @@ def get_wishlist(accountID: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
  
+
+@app.post("/make-review")
+def make_review(review: Review):
+    connection = get_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+                   INSERT INTO Review (accountID, gameID, starRating) 
+                   Values (?, ?, ?)
+                   
+                   """, (review.accountID, review.gameID, review.starRating))
+    connection.commit()
+    connection.close()
+
+    return {"message": "review successfully created"}
+
+
+@app.get("/get-review-game")
+def get_reviews_game(gameID: int):
+    connection = get_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+                    SELECT Account.username, Review.starRating
+                    FROM Review
+                    JOIN Account ON Review.accountID = Account.accountID
+                    WHERE Review.gameID = ?
+                    """, (gameID,))
+
+    rows = cursor.fetchall()
+    connection.close()
+
+    return [
+        {
+            "username": row[0],
+            "starRating": row[1]
+        }
+        for row in rows
+    ]
+
+@app.get("/get-review-user")
+def get_reviews_user(accountID: int):
+    connection = get_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+                    SELECT Game.name, Game.publisher, Review.starRating
+                    FROM Review
+                    JOIN Game ON Review.gameID = Game.gameID
+                    WHERE Review.accountID = ?
+                    """, (accountID,))
+    
+    rows = cursor.fetchall()
+    connection.close()
+
+    return [
+        {
+            "gameName": row[0],
+            "publisher": row[1],
+            "starRating": row[2]
+        }
+        for row in rows
+    ]
+
+
+
+@app.put("/update-user-info")
+def update_user_info(user: UpdateUser):
+    connection = get_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        UPDATE Account
+        SET username = ?,
+            password = ?,
+            name = ?,
+            email = ?,
+            phoneNumber = ?
+        WHERE accountID = ?
+    """, (user.username, user.password, user.name,
+        user.email, user.phoneNumber, user.accountID))
+
+    connection.commit()
+    connection.close()
+
+    return {"message": "User updated successfully"}
  
             
         

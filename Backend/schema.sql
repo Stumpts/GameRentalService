@@ -1,11 +1,7 @@
 CREATE TABLE IF NOT EXISTS Account (
     accountID INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(20),
-    password VARCHAR(20)
-);
-
-CREATE TABLE IF NOT EXISTS Customer (
-    customerID INTEGER PRIMARY KEY AUTOINCREMENT,
+    password VARCHAR(20),
     name VARCHAR(20),
     email VARCHAR(20),
     phoneNumber CHAR(11)
