@@ -81,7 +81,7 @@ def get_rental_history(accountID: int):
         connection = get_db()
         cursor = connection.cursor()
         cursor.execute("""
-                   SELECT Game.name, Rental.rentDate, Rental.returnDate
+                   SELECT Game.name, Game.gameID, Rental.rentDate, Rental.returnDate
                     FROM Rental
                     JOIN Game ON Rental.gameID = Game.gameID
                     WHERE Rental.accountID = ?
@@ -89,8 +89,7 @@ def get_rental_history(accountID: int):
         rows = cursor.fetchall()
         connection.close()
         return [
-        {
-            "gameName": row[0],"rentDate": row[1],"returnDate": row[2] }for row in rows]
+        { "gameName": row[0],"gameID": row[1],"rentDate": row[2],"returnDate": row[3] }for row in rows]
     except HTTPException:
         raise
     except Exception as e:
