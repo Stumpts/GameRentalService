@@ -67,6 +67,8 @@ def create_account(account: Account):
         accountID = cursor.lastrowid
         connection.close()
         return{"message": "Account successfully created","accountID": accountID}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -89,6 +91,8 @@ def get_rental_history(accountID: int):
         return [
         {
             "gameName": row[0],"rentDate": row[1],"returnDate": row[2] }for row in rows]
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -122,6 +126,8 @@ def search_game(query: str):
             }
             for row in rows
         ]
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -155,6 +161,8 @@ def get_account_info(accountID: int):
             "phoneNumber": row[5]
             }
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -180,6 +188,8 @@ def verify_login(account: AccountLogin):
         if row is None:
             raise HTTPException(status_code=401, detail="Credentials incorrect")
         return {"accountID": row[0]}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -212,6 +222,8 @@ def get_available_games():
             }
             for row in rows
         ]
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -271,8 +283,13 @@ def add_to_wishlist(item: WishlistItem):
         connection.commit()
         connection.close()
         return {"message": "Game added to wishlist"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
  
  
 @app.delete("/remove-from-wishlist")
@@ -329,6 +346,8 @@ def get_wishlist(accountID: int):
             }
             for row in rows
         ]
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -351,6 +370,8 @@ def make_review(review: Review):
         connection.close()
 
         return {"message": "review successfully created"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -380,6 +401,8 @@ def get_reviews_game(gameID: int):
             }
             for row in rows
         ]
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -411,6 +434,8 @@ def get_reviews_user(accountID: int):
             }
             for row in rows
         ]
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -440,6 +465,8 @@ def update_user_info(user: UpdateUser):
         connection.close()
 
         return {"message": "User updated successfully"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
