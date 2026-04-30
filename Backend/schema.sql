@@ -37,12 +37,12 @@ CREATE TABLE IF NOT EXISTS Subscription (
 
 
 CREATE TABLE IF NOT EXISTS Rental (
+    RentalID INTEGER PRIMARY KEY AUTOINCREMENT,
     accountID INTEGER,
     gameID INTEGER,
     rentDate DATE,
     returnDate DATE,
 
-    PRIMARY KEY (accountID, gameID, rentDate),
     FOREIGN KEY (accountID) REFERENCES Account(accountID),
     FOREIGN KEY (gameID) REFERENCES Game(gameID)
 );

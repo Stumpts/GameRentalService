@@ -32,7 +32,7 @@ export default function Login() {
         const data = await response.json();
         sessionStorage.setItem("accountID", data.accountID);
         setError(false);
-        navigate("/");
+        navigate("/home");
       }
     } else if (state === "register") {
       const response = await fetch("http://127.0.0.1:8000/create-account", {

@@ -69,6 +69,9 @@ def create_account(account: Account):
         return{"message": "Account successfully created","accountID": accountID}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 @app.get("/get-rental-history")
 def get_rental_history(accountID: int):
@@ -88,6 +91,9 @@ def get_rental_history(accountID: int):
             "gameName": row[0],"rentDate": row[1],"returnDate": row[2] }for row in rows]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 @app.get("/search-games")
 def search_game(query: str):
@@ -118,6 +124,9 @@ def search_game(query: str):
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 @app.get("/get-account-information")
 def get_account_info(accountID: int):
@@ -146,10 +155,11 @@ def get_account_info(accountID: int):
             "phoneNumber": row[5]
             }
         )
-    except HTTPException:
-        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
         
         
 
@@ -170,10 +180,11 @@ def verify_login(account: AccountLogin):
         if row is None:
             raise HTTPException(status_code=401, detail="Credentials incorrect")
         return {"accountID": row[0]}
-    except HTTPException:
-        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 @app.get("/available-games")
 def get_available_games():
@@ -203,6 +214,9 @@ def get_available_games():
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 @app.post("/rent-game")
 def rent_game(accountID: int, gameID: int):
@@ -211,13 +225,18 @@ def rent_game(accountID: int, gameID: int):
         connection = get_db()
         cursor = connection.cursor()
 
-        # Check if the game is available
         cursor.execute("""
-                       SELECT * FROM Game
-                       WHERE gameID = ? AND gameID NOT IN (
-                           SELECT gameID FROM Rental WHERE returnDate IS NULL
-                       )
-                       """, (gameID,))
+            SELECT 1
+            FROM Game
+            WHERE gameID = ?
+              AND NOT EXISTS (
+                  SELECT *
+                  FROM Rental
+                  WHERE gameID = ?
+                    AND returnDate IS NULL
+              )
+        """, (gameID, gameID))
+        
         if cursor.fetchone() is None:
             raise HTTPException(status_code=400, detail="Game is not available for rent")
 
@@ -226,13 +245,18 @@ def rent_game(accountID: int, gameID: int):
                        INSERT INTO Rental (accountID, gameID, rentDate) 
                        VALUES (?, ?, DATE('now'))
                        """, (accountID, gameID))
+        
         connection.commit()
         connection.close()
         return {"message": "Game rented successfully"}
     except HTTPException:
-        raise
+        if connection:
+            connection.rollback()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 @app.post("/add-to-wishlist")
 def add_to_wishlist(item: WishlistItem):
@@ -276,6 +300,9 @@ def remove_from_wishlist(accountID: int, gameID: int):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
  
  
 @app.get("/get-wishlist")
@@ -304,94 +331,120 @@ def get_wishlist(accountID: int):
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
  
 
 @app.post("/make-review")
 def make_review(review: Review):
-    connection = get_db()
-    cursor = connection.cursor()
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
 
-    cursor.execute("""
-                   INSERT INTO Review (accountID, gameID, starRating) 
-                   Values (?, ?, ?)
-                   
-                   """, (review.accountID, review.gameID, review.starRating))
-    connection.commit()
-    connection.close()
+        cursor.execute("""
+                    INSERT INTO Review (accountID, gameID, starRating) 
+                    Values (?, ?, ?)
+                    
+                    """, (review.accountID, review.gameID, review.starRating))
+        connection.commit()
+        connection.close()
 
-    return {"message": "review successfully created"}
-
+        return {"message": "review successfully created"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 @app.get("/get-review-game")
 def get_reviews_game(gameID: int):
-    connection = get_db()
-    cursor = connection.cursor()
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
 
-    cursor.execute("""
-                    SELECT Account.username, Review.starRating
-                    FROM Review
-                    JOIN Account ON Review.accountID = Account.accountID
-                    WHERE Review.gameID = ?
-                    """, (gameID,))
+        cursor.execute("""
+                        SELECT Account.username, Review.starRating
+                        FROM Review
+                        JOIN Account ON Review.accountID = Account.accountID
+                        WHERE Review.gameID = ?
+                        """, (gameID,))
 
-    rows = cursor.fetchall()
-    connection.close()
+        rows = cursor.fetchall()
+        connection.close()
 
-    return [
-        {
-            "username": row[0],
-            "starRating": row[1]
-        }
-        for row in rows
-    ]
+        return [
+            {
+                "username": row[0],
+                "starRating": row[1]
+            }
+            for row in rows
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 @app.get("/get-review-user")
 def get_reviews_user(accountID: int):
-    connection = get_db()
-    cursor = connection.cursor()
-
-    cursor.execute("""
-                    SELECT Game.name, Game.publisher, Review.starRating
-                    FROM Review
-                    JOIN Game ON Review.gameID = Game.gameID
-                    WHERE Review.accountID = ?
-                    """, (accountID,))
     
-    rows = cursor.fetchall()
-    connection.close()
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
 
-    return [
-        {
-            "gameName": row[0],
-            "publisher": row[1],
-            "starRating": row[2]
-        }
-        for row in rows
-    ]
+        cursor.execute("""
+                        SELECT Game.name, Game.publisher, Review.starRating
+                        FROM Review
+                        JOIN Game ON Review.gameID = Game.gameID
+                        WHERE Review.accountID = ?
+                        """, (accountID,))
+        
+        rows = cursor.fetchall()
+        connection.close()
 
+        return [
+            {
+                "gameName": row[0],
+                "publisher": row[1],
+                "starRating": row[2]
+            }
+            for row in rows
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 
 @app.put("/update-user-info")
 def update_user_info(user: UpdateUser):
-    connection = get_db()
-    cursor = connection.cursor()
+    
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
 
-    cursor.execute("""
-        UPDATE Account
-        SET username = ?,
-            password = ?,
-            name = ?,
-            email = ?,
-            phoneNumber = ?
-        WHERE accountID = ?
-    """, (user.username, user.password, user.name,
-        user.email, user.phoneNumber, user.accountID))
+        cursor.execute("""
+            UPDATE Account
+            SET username = ?,
+                password = ?,
+                name = ?,
+                email = ?,
+                phoneNumber = ?
+            WHERE accountID = ?
+        """, (user.username, user.password, user.name,
+            user.email, user.phoneNumber, user.accountID))
 
-    connection.commit()
-    connection.close()
+        connection.commit()
+        connection.close()
 
-    return {"message": "User updated successfully"}
- 
+        return {"message": "User updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()   
             
         
 
