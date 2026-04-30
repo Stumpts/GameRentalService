@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS Game (
     ageRating VARCHAR(3),
     price DECIMAL(5, 2),
     averageStarRating DECIMAL (3,2),
-    releaseDate DATE
-
+    releaseDate DATE,
+    isAvailable BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS Review (

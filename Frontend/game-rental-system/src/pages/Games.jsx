@@ -1,29 +1,24 @@
 import Card from "../components/Card";
 import Navbar from "../components/Navbar";
+import { useEffect, useState } from 'react';
+
 
 export default function Games() {
-  
-    // dummy data for testing, will replace with actual data from backend later
-    const data = [
-    {
-      gameID: 1,
-      name: "Elden Ring",
-      publisher: "FromSoftware",
-      ageRating: "M",
-      price: 59.99,
-      averageStarRating: 4.85,
-      releaseDate: "2022-02-25",
-    },
-    {
-      gameID: 2,
-      name: "Stardew Valley",
-      publisher: "ConcernedApe",
-      ageRating: "E",
-      price: 14.99,
-      averageStarRating: 4.95,
-      releaseDate: "2016-02-26"
-    },
-  ];
+  const [games, setGames] = useState([]);
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/available-games");
+        const data = await response.json();
+        setGames(data);
+      } catch (error) {
+        console.error("Error fetching games:", error);
+      }
+    };
+
+    fetchGames();
+  }, []);
 
   return (
     <>
@@ -32,7 +27,7 @@ export default function Games() {
         Our Available Games to Rent!
       </h1>
 
-      <Card games={data} />
+      <Card games={games} />
     </>
   );
 }

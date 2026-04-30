@@ -1,4 +1,10 @@
 export default function Card({ games }) {
+  
+  function handleRent(gameID) {
+    // Implement rent logic here, e.g., send a request to the backend to rent the game
+    console.log(`Renting game with ID: ${gameID}`);
+  }
+  
   return (
     <>
       <div className="p-6 max-w-5xl mx-auto cursor-pointer">
@@ -22,9 +28,14 @@ export default function Card({ games }) {
                 <span>${game.price.toFixed(2)}</span>
               </div>
 
-              <p className="text-xs text-gray-500">
-                Released: {new Date(game.releaseDate).toLocaleDateString()}
-              </p>
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-xs text-gray-500">
+                  Released: {new Date(game.releaseDate).toLocaleDateString()}
+                </p>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 rounded cursor-pointer ease-[cubic-bezier(0.175,0.885,0.32,1.275)] active:translate-y-1 active:scale-x-110 active:scale-y-90 hover:-translate-y-1 hover:scale-105" onClick={() => handleRent(game.gameID)}>
+                  Rent
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -197,10 +197,47 @@ def get_available_games():
                 "ageRating": row[3],
                 "price": row[4],
                 "averageStarRating": row[5],
-                "releaseDate": row[6]
+                "releaseDate": row[6],
+                "isAvailable": row[7]
             }
             for row in rows
         ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/rent-game")
+def rent_game(accountID: int, gameID: int):
+    """Rent a game for a user."""
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+
+        # Check if the game is available
+        cursor.execute("""
+                       SELECT * FROM Game
+                       WHERE gameID = ? AND gameID NOT IN (
+                           SELECT gameID FROM Rental WHERE returnDate IS NULL
+                       )
+                       """, (gameID,))
+        if cursor.fetchone() is None:
+            raise HTTPException(status_code=400, detail="Game is not available for rent")
+
+        # Update isAvailable status in Game table
+        cursor.execute("""
+                       UPDATE Game
+                       SET isAvailable = 0
+                       WHERE gameID = ?
+                       """, (gameID,))
+        # Rent the game
+        cursor.execute("""
+                       INSERT INTO Rental (accountID, gameID, rentDate) 
+                       VALUES (?, ?, DATE('now'))
+                       """, (accountID, gameID))
+        connection.commit()
+        connection.close()
+        return {"message": "Game rented successfully"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
