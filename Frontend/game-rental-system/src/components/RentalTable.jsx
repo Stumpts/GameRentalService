@@ -1,4 +1,8 @@
+import { useState } from "react";
+import ReviewModal from "./ReviewModal";
 export default function RentalTable({ data }) { 
+
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   const handleReturn = async (rentalID) => {
     try {
@@ -65,9 +69,14 @@ export default function RentalTable({ data }) {
                     {isReturned ? "Returned" : "Rented"}
                   </span>
                   {!isReturned && <button className="ml-2 bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded cursor-pointer" onClick={() => handleReturn(rental.rentalID)}>Return</button>}
-                  <button className="ml-2 bg-black hover:bg-gray-800 text-white py-1 px-3 rounded cursor-pointer">Rate Game</button>
+                  <button className="ml-2 bg-black hover:bg-gray-800 text-white py-1 px-3 rounded cursor-pointer" onClick={() => setReviewModalOpen(true)}>
+                    Rate Game
+                  </button>
                 </td>
               </tr>
+              
+              
+
             );
           })}
         </tbody>
