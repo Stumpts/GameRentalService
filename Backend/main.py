@@ -22,7 +22,13 @@ init_db()
 class Account(BaseModel):
     username: str
     password: str
+    name: str
+    email: str
+    phoneNumber: int
 
+class AccountLogin(BaseModel):
+    username: str
+    password: str
 
 class Review(BaseModel):
     accountID: int
@@ -53,9 +59,9 @@ def create_account(account: Account):
         cursor = connection.cursor()
 
         cursor.execute("""
-                   INSERT INTO Account (username, password) 
-                   VALUES (? , ?)
-                   """, (account.username, account.password,))
+                   INSERT INTO Account (username, password, name, email, phoneNumber) 
+                   VALUES (? , ?, ?, ?, ?)
+                   """, (account.username, account.password, account.name, account.email, account.phoneNumber))
     
         connection.commit()
         accountID = cursor.lastrowid
@@ -148,7 +154,7 @@ def get_account_info(accountID: int):
         
 
 @app.post("/verify-login")
-def verify_login(account: Account):
+def verify_login(account: AccountLogin):
     try:
         connection = get_db()
         cursor = connection.cursor()
