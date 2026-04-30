@@ -1,5 +1,19 @@
 export default function RentalTable({ data }) { 
 
+  const handleReturn = async (rentalID) => {
+    try {
+      const response = await fetch(`http://localhost:8000/return-game?rentalID=${rentalID}`, {
+        method: "PUT",
+      });
+      const data = await response.json();
+      alert(data.message);
+    }
+    catch (error) {
+      console.error("Error returning game:", error);
+    }
+  }
+
+
   return (
     <div className="flex items-center justify-center rounded-2xl shadow-md bg-white mt-4 mx-8">
       <table className="min-w-full text-sm text-left text-gray-700">
@@ -16,11 +30,11 @@ export default function RentalTable({ data }) {
 
         <tbody className="divide-y divide-gray-200">
           {data.map((rental) => {
-            const isReturned = !!rental.returnDate;
+            const isReturned = !!rental.returnDate; // checks if returnDate is NULL or not
 
             return (
               <tr
-                key={`${rental.rentalID}-${rental.gameID}-${rental.rentDate}`}
+                key={rental.rentalID}
                 className="hover:bg-gray-50 transition hover:cursor-pointer"
               >
                 <td className="px-6 py-4 font-medium text-gray-900">
@@ -50,6 +64,8 @@ export default function RentalTable({ data }) {
                   >
                     {isReturned ? "Returned" : "Rented"}
                   </span>
+                  {!isReturned && <button className="ml-2 bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded cursor-pointer" onClick={() => handleReturn(rental.rentalID)}>Return</button>}
+                  <button className="ml-2 bg-black hover:bg-gray-800 text-white py-1 px-3 rounded cursor-pointer">Rate Game</button>
                 </td>
               </tr>
             );

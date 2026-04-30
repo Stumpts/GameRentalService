@@ -269,6 +269,34 @@ def rent_game(accountID: int, gameID: int):
         if connection:
             connection.close()
 
+@app.put("/return-game")
+def return_game(rentalID: int):
+    """Return a rented game."""
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+                       UPDATE Rental
+                       SET returnDate = DATE('now')
+                       WHERE rentalID = ? AND returnDate IS NULL
+                       """, (rentalID,))
+        
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=400, detail="Rental not found or already returned")
+
+        connection.commit()
+        connection.close()
+        return {"message": "Game returned successfully"}
+    except HTTPException:
+        if connection:
+            connection.rollback()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
+
 @app.post("/add-to-wishlist")
 def add_to_wishlist(item: WishlistItem):
     """Add a game to a user's wishlist."""
