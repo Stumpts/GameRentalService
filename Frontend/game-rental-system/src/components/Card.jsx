@@ -5,7 +5,7 @@ export default function Card({ games, setGames }) {
         
         try {
             const response = await fetch(`http://localhost:8000/rent-game?accountID=${sessionStorage.getItem("accountID")}&gameID=${game.gameID}`, {
-                method: "PUT",
+                method: "POST",
                 });
             const data = await response.json();
             alert(data.message);

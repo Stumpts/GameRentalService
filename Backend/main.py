@@ -204,7 +204,7 @@ def get_available_games():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.put("/rent-game")
+@app.post("/rent-game")
 def rent_game(accountID: int, gameID: int):
     """Rent a game for a user."""
     try:
