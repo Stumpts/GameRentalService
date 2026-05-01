@@ -2,9 +2,10 @@ import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 
 export default function Profile() {
-  const [currentTab, setCurrentTab] = useState("profile");
+  const [currentTab, setCurrentTab] = useState("Profile");
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState([]);
+  const [profileReviews, setProfileReviews] = useState([]);
 
   useEffect(() => {
       const fetchProfileData = async () => {
@@ -19,7 +20,20 @@ export default function Profile() {
         }
       };
 
+      const fetchReviews = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/get-review-user?accountID=${sessionStorage.getItem("accountID")}`);
+            const data = await response.json();
+            setProfileReviews(data);
+            console.log("User Reviews:", data);
+        }
+        catch (error) {
+            console.error("Error fetching user reviews:", error);
+        }
+      }
+
     fetchProfileData();
+    fetchReviews();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -63,16 +77,17 @@ export default function Profile() {
       <h1 className="flex items-center justify-center text-3xl mt-4">
         My Profile
       </h1>
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-gray-100 flex items-center justify-center p-4">
         <div className="w-full max-w-md rounded-2xl bg-white shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Profile Card
           </h2>
 
           <div className="flex gap-4">
-            <button>Profile</button>
-            <button>Reviews</button>
+            <button onClick={() => setCurrentTab("Profile")}>Profile</button>
+            <button onClick={() => setCurrentTab("Reviews")}>Reviews</button>
           </div>
+          {currentTab === "Profile" && (
           <div className="mt-4">
             <form key={profileData.accountID} onSubmit={handleSubmit}>
               {isEditing ? (
@@ -136,7 +151,26 @@ export default function Profile() {
                   </button>
                 )}
             </form>
-          </div>
+          </div>)}
+
+          {currentTab === "Reviews" && (
+            <div className="mt-4">
+              {profileReviews.length === 0 ? (
+                <p>No reviews found.</p>
+              ) : (
+                <ul>
+                  {profileReviews.map((review) => (
+                    <li key={review.reviewID} className="border-b border-gray-300 py-2">
+                        <div className="flex justify-between items-center">
+                            <p>{review.gameName}</p>
+                            <p className="text-sm text-gray-500">Rating: {review.starRating} Stars</p>
+                        </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>
