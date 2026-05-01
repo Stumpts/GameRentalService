@@ -18,11 +18,11 @@ CREATE TABLE IF NOT EXISTS Game (
 );
 
 CREATE TABLE IF NOT EXISTS Review (
+    reviewID INTEGER PRIMARY KEY AUTOINCREMENT,
     gameID INTEGER,
     accountID INT,
     StarRating DECIMAL (2, 1),
 
-    PRIMARY KEY (gameID, accountID),
     FOREIGN KEY (gameID) REFERENCES Game(gameID),
     FOREIGN KEY (accountID) REFERENCES Account(accountID)
 );

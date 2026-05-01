@@ -72,11 +72,17 @@ export default function RentalTable({ data }) {
                   <button className="ml-2 bg-black hover:bg-gray-800 text-white py-1 px-3 rounded cursor-pointer" onClick={() => setReviewModalOpen(true)}>
                     Rate Game
                   </button>
+                  {reviewModalOpen && (
+                    <ReviewModal
+                      accountID={sessionStorage.getItem("accountID")}
+                      gameID={rental.gameID}
+                      gameName={rental.gameName}
+                      onClose={() => setReviewModalOpen(false)}
+                    />
+                  )}
                 </td>
               </tr>
               
-              
-
             );
           })}
         </tbody>
