@@ -1,24 +1,25 @@
 import { useState } from "react";
 
-export default function ReviewModal({ accountID, gameID, onClose, gameName }) {
+export default function UpdateReviewModal({ accountID, gameID, onClose, gameName, reviewID }) {
 
   const [starRating, setStarRating] = useState(0);
   const [comment, setComment] = useState("");
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:8000/make-review", {
-        method: "POST",
+      const response = await fetch(`http://localhost:8000/update-review?reviewID=${reviewID}`, {
+        method: "PUT",
         headers: {
-          "Content-Type": "application/json"
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "accountID" : accountID,
-          "gameID" : gameID,
-          "starRating" : starRating,
-          "comment" : comment
+            "accountID" : accountID,
+            "gameID" : gameID,
+            "starRating" : starRating,
+            "comment" : comment
         })
       });
+      
       const data = await response.json();
       alert(data.message);
       onClose();

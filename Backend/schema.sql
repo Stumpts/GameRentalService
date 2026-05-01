@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS Review (
     gameID INTEGER,
     accountID INT,
     StarRating DECIMAL (2, 1),
+    comment VARCHAR(1000),
 
     FOREIGN KEY (gameID) REFERENCES Game(gameID),
     FOREIGN KEY (accountID) REFERENCES Account(accountID)

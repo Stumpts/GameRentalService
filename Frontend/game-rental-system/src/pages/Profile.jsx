@@ -1,11 +1,16 @@
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
+import ReviewModal from "../components/ReviewModal";
+import UpdateReviewModal from "../components/UpdateReviewModal";
 
 export default function Profile() {
   const [currentTab, setCurrentTab] = useState("Profile");
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState([]);
   const [profileReviews, setProfileReviews] = useState([]);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+
 
   useEffect(() => {
       const fetchProfileData = async () => {
@@ -162,14 +167,35 @@ export default function Profile() {
                   {profileReviews.map((review) => (
                     <li key={review.reviewID} className="border-b border-gray-300 py-2">
                         <div className="flex justify-between items-center">
-                            <p>{review.gameName}</p>
-                            <p className="text-sm text-gray-500">Rating: {review.starRating} Stars</p>
+                            <p className="font-bold">{review.gameName}</p>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-gray-500">Rating: {review.starRating} Stars</p>
+                                <button className="bg-black hover:bg-gray-700 text-white rounded-md cursor-pointer"onClick={() => {
+                                    setSelectedReview(review);
+                                    setReviewModalOpen(true);
+                                }}>
+                                    Edit Review
+                                </button>
+                            </div>
                         </div>
+                        <h2>Comment:</h2>
+                        <p className="">{review.comment}</p>
+
                     </li>
                   ))}
+                  {reviewModalOpen && selectedReview && (
+                      <UpdateReviewModal
+                          accountID={sessionStorage.getItem("accountID")}
+                          gameID={selectedReview.gameID}
+                          onClose={() => setReviewModalOpen(false)}
+                          gameName={selectedReview.gameName}
+                          reviewID={selectedReview.reviewID}
+                      />
+                  )}
                 </ul>
               )}
             </div>
+            
           )}
         </div>
       </div>

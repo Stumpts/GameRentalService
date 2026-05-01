@@ -34,6 +34,7 @@ class Review(BaseModel):
     accountID: int
     gameID: int
     starRating: float
+    comment: Optional[str] = None
 
 
 class WishlistItem(BaseModel):
@@ -389,14 +390,37 @@ def make_review(review: Review):
         cursor = connection.cursor()
 
         cursor.execute("""
-                    INSERT INTO Review (accountID, gameID, starRating) 
-                    Values (?, ?, ?)
+                    INSERT INTO Review (accountID, gameID, starRating, comment) 
+                    Values (?, ?, ?, ?)
                     
-                    """, (review.accountID, review.gameID, review.starRating))
+                    """, (review.accountID, review.gameID, review.starRating, review.comment))
         connection.commit()
         connection.close()
 
         return {"message": "review successfully created"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
+
+@app.put("/update-review")
+def update_review(review: Review, reviewID: int):
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+                    UPDATE Review
+                    SET starRating = ?, comment = ?
+                    WHERE reviewID = ?
+                    """, (review.starRating, review.comment, reviewID))
+        connection.commit()
+        connection.close()
+
+        return {"message": "review successfully updated"}
     except HTTPException:
         raise
     except Exception as e:
@@ -444,7 +468,7 @@ def get_reviews_user(accountID: int):
         cursor = connection.cursor()
 
         cursor.execute("""
-                        SELECT Game.name, Game.publisher, Review.starRating
+                        SELECT Game.name, Game.publisher, Review.starRating, Review.comment, Review.accountID, Review.gameID, Review.reviewID
                         FROM Review
                         JOIN Game ON Review.gameID = Game.gameID
                         WHERE Review.accountID = ?
@@ -457,7 +481,11 @@ def get_reviews_user(accountID: int):
             {
                 "gameName": row[0],
                 "publisher": row[1],
-                "starRating": row[2]
+                "starRating": row[2],
+                "comment": row[3],
+                "accountID": row[4],
+                "gameID": row[5],
+                "reviewID": row[6]
             }
             for row in rows
         ]
