@@ -101,8 +101,12 @@ export default function Profile() {
           </h2>
 
           <div className="flex gap-4">
-            <button onClick={() => setCurrentTab("Profile")}>Profile</button>
-            <button onClick={() => setCurrentTab("Reviews")}>Reviews</button>
+            <button onClick={() => setCurrentTab("Profile")} className={currentTab === "Profile" ? "bg-black text-white rounded p-1" : "bg-gray-300 text-gray-700 rounded p-1 cursor-pointer"}>
+              Profile
+            </button>
+            <button onClick={() => setCurrentTab("Reviews")} className={currentTab === "Reviews" ? "bg-black text-white rounded p-1" : "bg-gray-300 text-gray-700 rounded p-1 cursor-pointer"}>
+              Reviews
+            </button>
           </div>
           {currentTab === "Profile" && (
           <div className="mt-4">
@@ -147,17 +151,17 @@ export default function Profile() {
                   />
                 </div>
               ) : (
-                <>
-                  <p>Account ID: {profileData.accountID}</p>
-                  <p>Username: {profileData.username}</p>
-                  <p>Email: {profileData.email}</p>
-                  <p>Phone Number: {profileData.phoneNumber}</p>
-                  <p>Name: {profileData.name}</p>
-                </>
+                <div className="flex flex-col gap-4 border border-gray-300 rounded-md p-4">
+                  <p className="border-b">Account ID: {profileData.accountID}</p>
+                  <p className="border-b">Username: {profileData.username}</p>
+                  <p className="border-b">Email: {profileData.email}</p>
+                  <p className="border-b">Phone Number: {profileData.phoneNumber}</p>
+                  <p className="border-b">Name: {profileData.name}</p>
+                </div>
               )}
 
                 {!isEditing && (
-                  <button onClick={() => setIsEditing(!isEditing)} className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">
+                  <button onClick={() => setIsEditing(!isEditing)} className="mt-4 bg-gray-900 hover:bg-gray-700 text-white py-2 px-4 rounded-md cursor-pointer">
                     Edit Profile
                   </button>
                 )}

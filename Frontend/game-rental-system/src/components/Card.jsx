@@ -42,7 +42,7 @@ export default function Card({ games, setGames }) {
                   Released: {new Date(game.releaseDate).toLocaleDateString()}
                 </p>
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 rounded cursor-pointer ease-[cubic-bezier(0.175,0.885,0.32,1.275)] active:translate-y-1 active:scale-x-110 active:scale-y-90 hover:-translate-y-1 hover:scale-105"
+                  className="bg-black hover:bg-gray-700 text-white font-bold px-4 rounded cursor-pointer ease-[cubic-bezier(0.175,0.885,0.32,1.275)] active:translate-y-1 active:scale-x-110 active:scale-y-90 hover:-translate-y-1 hover:scale-105"
                   onClick={() => handleRent(game)}
                 >
                   Rent
