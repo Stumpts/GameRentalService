@@ -527,9 +527,25 @@ def update_user_info(user: UpdateUser):
     finally:
         if connection:
             connection.close()   
-            
-        
 
+@app.delete("/delete-review")
+def delete_review(reviewID: int):
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+
+        cursor.execute("DELETE FROM Review WHERE reviewID = ?", (reviewID,))
+        connection.commit()
+        connection.close()
+
+        return {"message": "Review deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()
 
 
 

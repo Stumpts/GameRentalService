@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function UpdateReviewModal({ accountID, gameID, onClose, gameName, reviewID }) {
+export default function UpdateReviewModal({ accountID, gameID, onClose, gameName, reviewID, setProfileReviews }) {
 
   const [starRating, setStarRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -26,6 +26,10 @@ export default function UpdateReviewModal({ accountID, gameID, onClose, gameName
     } catch (error) {
       console.error("Error submitting review:", error);
     }
+    finally {
+        setProfileReviews(prevReviews => prevReviews.map(review => review.reviewID === reviewID ? { ...review, starRating, comment } : review));
+    }
+    
   }
 
   return (

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import ReviewModal from "./ReviewModal";
-export default function RentalTable({ data }) { 
+export default function RentalTable({ data, setData }) { 
 
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-
+  
   const handleReturn = async (rentalID) => {
     try {
       const response = await fetch(`http://localhost:8000/return-game?rentalID=${rentalID}`, {
@@ -14,6 +14,9 @@ export default function RentalTable({ data }) {
     }
     catch (error) {
       console.error("Error returning game:", error);
+    }
+    finally {
+      setData(prevData => prevData.map(rental => rental.rentalID === rentalID ? { ...rental, returnDate: new Date().toISOString() } : rental));
     }
   }
 

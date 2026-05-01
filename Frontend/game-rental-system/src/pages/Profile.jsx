@@ -24,7 +24,7 @@ export default function Profile() {
           console.error("Error fetching profile data:", error);
         }
       };
-
+    
       const fetchReviews = async () => {
         try {
             const response = await fetch(`http://localhost:8000/get-review-user?accountID=${sessionStorage.getItem("accountID")}`);
@@ -40,6 +40,18 @@ export default function Profile() {
     fetchProfileData();
     fetchReviews();
   }, []);
+
+  const handleDelete = async (reviewID) => {
+    try {
+        const response = await fetch(`http://localhost:8000/delete-review?reviewID=${reviewID}`, {
+            method: "DELETE"
+        });
+        const data = await response.json();
+        setProfileReviews(prevReviews => prevReviews.filter(review => review.reviewID !== reviewID));
+    } catch (error) {
+        console.error("Error deleting review:", error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,7 +108,7 @@ export default function Profile() {
           <div className="mt-4">
             <form key={profileData.accountID} onSubmit={handleSubmit}>
               {isEditing ? (
-                <form>
+                <div>
                   <p className="mb-4">Account ID: {profileData.accountID}</p>
                   <label>Username:</label>
                   <input
@@ -133,7 +145,7 @@ export default function Profile() {
                     onChange={handleChange}
                     className="border border-gray-300 rounded-md p-2 w-full mb-4"
                   />
-                </form>
+                </div>
               ) : (
                 <>
                   <p>Account ID: {profileData.accountID}</p>
@@ -168,6 +180,7 @@ export default function Profile() {
                     <li key={review.reviewID} className="border-b border-gray-300 py-2">
                         <div className="flex justify-between items-center">
                             <p className="font-bold">{review.gameName}</p>
+                            <p className="text-sm text-gray-500">Publisher: {review.publisher}</p>
                             <div className="flex flex-col gap-2">
                                 <p className="text-gray-500">Rating: {review.starRating} Stars</p>
                                 <button className="bg-black hover:bg-gray-700 text-white rounded-md cursor-pointer"onClick={() => {
@@ -175,6 +188,11 @@ export default function Profile() {
                                     setReviewModalOpen(true);
                                 }}>
                                     Edit Review
+                                </button>
+                                <button className="bg-red-500 hover:bg-red-600 text-white px-1 rounded cursor-pointer" onClick={() => {
+                                    handleDelete(review.reviewID);
+                                }}>
+                                    Delete Review
                                 </button>
                             </div>
                         </div>
@@ -190,6 +208,7 @@ export default function Profile() {
                           onClose={() => setReviewModalOpen(false)}
                           gameName={selectedReview.gameName}
                           reviewID={selectedReview.reviewID}
+                          setProfileReviews={setProfileReviews}
                       />
                   )}
                 </ul>

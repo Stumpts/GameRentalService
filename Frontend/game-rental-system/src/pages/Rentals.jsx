@@ -26,7 +26,7 @@ export default function Rentals() {
       <h1 className="flex items-center justify-center text-3xl mt-4">
         My Rentals
       </h1>
-      <RentalTable data={data} />
+      <RentalTable data={data} setData={setData}/>
     </>
   );
 }
