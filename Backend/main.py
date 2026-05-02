@@ -36,11 +36,6 @@ class Review(BaseModel):
     starRating: float
     comment: Optional[str] = None
 
-
-class WishlistItem(BaseModel):
-    accountID: int
-    gameID: int
-
 class UpdateUser(BaseModel):
     accountID: int
     username: Optional[str] = None

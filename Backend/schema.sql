@@ -28,15 +28,6 @@ CREATE TABLE IF NOT EXISTS Review (
     FOREIGN KEY (accountID) REFERENCES Account(accountID)
 );
 
-CREATE TABLE IF NOT EXISTS Subscription (
-    accountID INTEGER PRIMARY KEY,
-    tier INT,
-    vouchers INT,
-
-    FOREIGN KEY (accountID) REFERENCES Account(accountID)
-);
-
-
 CREATE TABLE IF NOT EXISTS Rental (
     RentalID INTEGER PRIMARY KEY AUTOINCREMENT,
     accountID INTEGER,
@@ -47,11 +38,5 @@ CREATE TABLE IF NOT EXISTS Rental (
     FOREIGN KEY (accountID) REFERENCES Account(accountID),
     FOREIGN KEY (gameID) REFERENCES Game(gameID)
 );
-CREATE TABLE IF NOT EXISTS Wishlist (
-    accountID INTEGER,
-    gameID INTEGER,
-    PRIMARY KEY (accountID, gameID),
-    FOREIGN KEY (accountID) REFERENCES Account(accountID),
-    FOREIGN KEY (gameID) REFERENCES Game(gameID)
-);
+
 
