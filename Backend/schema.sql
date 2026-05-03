@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS Game (
     publisher VARCHAR(20),
     ageRating VARCHAR(3),
     price DECIMAL(5, 2),
-    averageStarRating DECIMAL (3,2),
+    averageStarRating DECIMAL (3,2) DEFAULT 0.0,
     releaseDate DATE
 );
 
@@ -38,5 +38,47 @@ CREATE TABLE IF NOT EXISTS Rental (
     FOREIGN KEY (accountID) REFERENCES Account(accountID),
     FOREIGN KEY (gameID) REFERENCES Game(gameID)
 );
+
+
+CREATE TRIGGER IF NOT EXISTS gameRatingUpdateInsertTrig
+AFTER INSERT ON Review
+FOR EACH ROW
+BEGIN
+    UPDATE Game
+    SET averageStarRating = (
+        SELECT ROUND(AVG(StarRating), 2)
+        FROM Review
+        WHERE Review.gameID = NEW.gameID
+    )
+    WHERE gameID = NEW.gameID;
+END;
+
+
+CREATE TRIGGER IF NOT EXISTS gameRatingUpdateTrig
+AFTER UPDATE ON Review
+FOR EACH ROW
+BEGIN
+    UPDATE Game
+    SET averageStarRating = (
+        SELECT ROUND(AVG(StarRating), 2)
+        FROM Review
+        WHERE Review.gameID = NEW.gameID
+    )
+    WHERE gameID = NEW.gameID;
+END;
+
+
+CREATE TRIGGER IF NOT EXISTS gameRatingUpdateDeleteTrig
+AFTER DELETE ON Review
+FOR EACH ROW
+BEGIN
+    UPDATE Game
+    SET averageStarRating = (
+        SELECT ROUND(AVG(StarRating), 2)
+        FROM Review
+        WHERE Review.gameID = OLD.gameID
+    )
+    WHERE gameID = OLD.gameID;
+END;
 
 

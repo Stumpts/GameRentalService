@@ -6,6 +6,8 @@ def init_db():
     conn.execute("PRAGMA foreign_keys = ON;")
     with open("schema.sql") as f:
         conn.executescript(f.read())
+    with open("schema_initialize.sql") as f:
+        conn.executescript(f.read())
     conn.close()
 
 
