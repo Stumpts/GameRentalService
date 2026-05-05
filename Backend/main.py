@@ -94,40 +94,40 @@ def get_rental_history(accountID: int):
         if connection:
             connection.close()
 
-@app.get("/search-games")
-def search_game(query: str):
-    try: 
-        connection = get_db()
-        cursor = connection.cursor()
+# @app.get("/search-games")
+# def search_game(query: str):
+#     try: 
+#         connection = get_db()
+#         cursor = connection.cursor()
 
-        cursor.execute("""
-                       SELECT * 
-                       FROM Game 
-                       WHERE name LIKE ?
-                       """, (f"%{query}%",))
+#         cursor.execute("""
+#                        SELECT * 
+#                        FROM Game 
+#                        WHERE name LIKE ?
+#                        """, (f"%{query}%",))
     
-        rows = cursor.fetchall()
-        connection.close()
+#         rows = cursor.fetchall()
+#         connection.close()
 
-        return [
-            {
-                "gameID": row[0], 
-                 "name": row[1], 
-                 "publisher": row[2], 
-                 "ageRating": row[3], 
-                 "price": row[4], 
-                 "averageStarRating": row[5], 
-                 "releaseDate": row[6]
-            }
-            for row in rows
-        ]
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        if connection:
-            connection.close()
+#         return [
+#             {
+#                 "gameID": row[0], 
+#                  "name": row[1], 
+#                  "publisher": row[2], 
+#                  "ageRating": row[3], 
+#                  "price": row[4], 
+#                  "averageStarRating": row[5], 
+#                  "releaseDate": row[6]
+#             }
+#             for row in rows
+#         ]
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+#     finally:
+#         if connection:
+#             connection.close()
 
 @app.get("/get-account-information")
 def get_account_info(accountID: int):
@@ -456,7 +456,7 @@ def delete_review(reviewID: int):
         if connection:
             connection.close()
 
-
+##
 @app.get("/search-games")
 def search_games(search: str):
     try:
@@ -465,7 +465,7 @@ def search_games(search: str):
 
         cursor.execute("""
                        SELECT *
-                       FROM Games
+                       FROM Game
                        WHERE name LIKE '%' || ? || '%'
                     
                        """, (search,))
@@ -473,8 +473,18 @@ def search_games(search: str):
         games = cursor.fetchall()
         connection.close()
 
-        return games
-    
+        return [
+            {
+                "gameID": row[0],
+                "name": row[1],
+                "publisher": row[2],
+                "ageRating": row[3],
+                "price": row[4],
+                "averageStarRating": row[5],
+                "releaseDate": row[6]
+            }
+            for row in games
+        ]
     except HTTPException:
         raise
     except Exception as e:
@@ -482,7 +492,7 @@ def search_games(search: str):
     finally:
         if connection:
             connection.close()   
-    
+   ## 
 
 
 
