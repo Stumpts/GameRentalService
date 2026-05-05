@@ -46,7 +46,7 @@ FOR EACH ROW
 BEGIN
     UPDATE Game
     SET averageStarRating = (
-        SELECT ROUND(AVG(StarRating), 2)
+        SELECT COALESCE(AVG(StarRating), 2)
         FROM Review
         WHERE Review.gameID = NEW.gameID
     )
@@ -60,7 +60,7 @@ FOR EACH ROW
 BEGIN
     UPDATE Game
     SET averageStarRating = (
-        SELECT ROUND(AVG(StarRating), 2)
+        SELECT COALESCE(AVG(StarRating), 2)
         FROM Review
         WHERE Review.gameID = NEW.gameID
     )
@@ -74,7 +74,7 @@ FOR EACH ROW
 BEGIN
     UPDATE Game
     SET averageStarRating = (
-        SELECT ROUND(AVG(StarRating), 2)
+        SELECT COALESCE(AVG(StarRating), 2)
         FROM Review
         WHERE Review.gameID = OLD.gameID
     )

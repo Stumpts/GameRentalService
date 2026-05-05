@@ -457,5 +457,33 @@ def delete_review(reviewID: int):
             connection.close()
 
 
+@app.get("/search-games")
+def search_games(search: str):
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+                       SELECT *
+                       FROM Games
+                       WHERE name LIKE '%' || ? || '%'
+                    
+                       """, (search,))
+        
+        games = cursor.fetchall()
+        connection.close()
+
+        return games
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if connection:
+            connection.close()   
+    
+
+
 
 
